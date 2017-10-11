@@ -6,6 +6,7 @@ sbox0 = [0,14,2,10,9,15,8,11,6,4,3,7,13,12,1,5] # sbox 0: lightest version, fixe
 sbox1 = [10,13,14,6,15,7,3,5,9,8,0,12,11,1,2,4] # sbox 1: no fixed points
 sbox2 = [11,6,8,15,12,0,9,14,3,7,4,5,13,2,1,10] # sbox 2: lightweight sbox from prince family
 used_sbox = sbox0
+used_sbox_inv = [used_sbox.index(x) for x in range(16)]
 
 state_permutation = [0,11,6,13,10,1,12,7,5,14,3,8,15,4,9,2]
 state_permutation_inv = [state_permutation.index(x) for x in range(16)]
@@ -33,8 +34,11 @@ round_constants_string = [
 
 round_constants = [HexToBlock(s) for s in round_constants_string]
 
-def SubBytes(state):
-    return [used_sbox[b] for b in state]
+def SubBytes(state,inverse):
+    if not inverse:
+        return [used_sbox[b] for b in state]
+    else:
+        return [used_sbox_inv[b] for b in state]
 
 def XorBlocks(a,b):
     return [x^y for x,y in zip(a,b)]
@@ -108,10 +112,10 @@ def Round(state, tweakey, r, backwards):
         if r != 0:
             state = PermuteState(state,False)
             state = MixColumns(state)
-        state = SubBytes(state)
+        state = SubBytes(state,False)
         return state
     else:
-        state = SubBytes(state)
+        state = SubBytes(state,True)
         if r != 0:
             state = MixColumns(state)
             state = PermuteState(state,True)
