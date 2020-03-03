@@ -66,11 +66,12 @@ def MixColumns_M43(col):
 
 UsedMixColumns = MixColumns_M43
 def MixColumns(state):
+    mixed_state = [0 for _ in range(16)]
     for i in range(4):
         incol = [state[0+i], state[4+i], state[8+i], state[12+i]]
         outcol = UsedMixColumns(incol)
-        state[0+i], state[4+i], state[8+i], state[12+i] = outcol
-    return state
+        mixed_state[0+i], mixed_state[4+i], mixed_state[8+i], mixed_state[12+i] = outcol
+    return mixed_state
 
 def PermuteTweak(tweak):
     return [tweak[i] for i in tweak_permutation]
